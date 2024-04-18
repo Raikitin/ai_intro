@@ -95,6 +95,19 @@ class Node:
             self.path.append(node)
 
     # TODO not marked adj for BFS and UCS
+    def notMarkedAdjacent(self, nedge):
+        for edges in self.romania.nodes:
+            if edges.name == nedge:
+                source = edges.name
+                adjacents = []
+                for edge in edges.edges:
+                    if(source == edge.end.name and not edge.start.name in self.explored.name):
+                        adjacents.append(graph.Edge([edge.end.name, edge.start.name, edge.value]))
+                    elif(source == edge.start.name and not edge.end.name in self.explored):
+                        adjacents.append(graph.Edge([edge.start.name, edge.end.name, edge.value]))
+                return adjacents
+        return []
+
 
     def printExplored(self):
         for i, node in enumerate(self.explored):
@@ -112,6 +125,34 @@ class Node:
         return cost
 
     # TODO BFS UCS Test
+
+    def BFS(self, start, end):
+        self.explored = set()
+        self.path = []
+        self.visitable = Queue('fifo')
+        self.visitable.push(graph.Edge([[], start, 0]))
+
+        while(True):
+            node = None
+            while(not self.visitable.empty()):
+                node = self.visitable.pop()
+                if(not node in self.explored):
+                    break
+            else:
+                    return False
+
+            self.explored.add(node.end)
+
+            if(node.end == end):
+                node.start.append(node.end)
+                self.updatePath(node.start)
+                return True
+
+            self.updateStart(node)
+
+            for adjacent in self.notMarkedAdjacent(node.end):
+                self.visitable.push(graph.Edge([node.start.copy(), adjacent.end, adjacent.value]))
+
 
     def DFS(self, start, end):
         self.explored = {start}
@@ -132,9 +173,37 @@ class Node:
         if(node.name == start):
             return False
 
+    def UCS(self, start, end):
+        self.visitable = Queue('prio')
+        self.explored = set()
+        self.visitable.push(graph.Edge([[], start, 0]))
+        self.path = []
+
+        while(True):
+            if(self.visitable.empty()):
+                return False
+
+            edge = self.visitable.pop()
+            self.explored.add(edge.end)
+
+            if(edge.end == end):
+                edge.start.append(edge.end)
+                self.updatePath(edge.start)
+                #self.pathCost = edge.value
+                return True
+
+            self.updateStart(edge)
+
+            for adjacent in self.notMarkedAdjacent(edge.end):
+                self.visitable.push(graph.Edge[edge.start.copy(), adjacent, adjacent.value + edge.value])
+
 
 
 test = Node()
+test.BFS('Bu', 'Ti')
+test.printPath()
 test.DFS('Bu', 'Ti')
+test.printPath()
+test.UCS('Bu', 'Ti')
 test.printPath()
 #print("test")
