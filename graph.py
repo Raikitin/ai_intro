@@ -1,4 +1,4 @@
-#from prettytable import PrettyTable
+from prettytable import PrettyTable
 from utils import *
 
 

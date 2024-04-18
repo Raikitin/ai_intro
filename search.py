@@ -195,7 +195,7 @@ class Node:
             self.updateStart(edge)
 
             for adjacent in self.notMarkedAdjacent(edge.end):
-                self.visitable.push(graph.Edge[edge.start.copy(), adjacent, adjacent.value + edge.value])
+                self.visitable.push(graph.Edge([edge.start.copy(), adjacent.end, adjacent.value + edge.value]))
 
 
 
