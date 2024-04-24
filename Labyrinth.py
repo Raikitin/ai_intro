@@ -1,5 +1,7 @@
 import pygame
 import math
+import graph
+import search
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -87,6 +89,24 @@ class Grid:
           self.height = height
           self.width = width
           self.win = win
+
+          for i in range(rows):
+               self.grid.append([])
+               for j in range(rows):
+                    field = Field(j, j, margin, height, width, rows)
+                    self.grid[i].append(field)
+
+          self.start = self.grid[start[0]][start[1]]
+          self.end = self.grid[end[0]][end[1]]
+
+          self.start.make_start()
+          self.end.make_end()
+
+
+
+
+         # TODO other fuctions
+
 
      pygame.init()
 
