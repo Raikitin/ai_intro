@@ -88,43 +88,92 @@ class Grid:
           self.width = width
           self.win = win
 
-     pygame.init()
+          for i in range(rows):
+               self.grid.append([])
+               for j in range(rows):
+                    field = Field(i, j, margin, height, width, rows)
+                    self.grid[i].append(field)
 
-     size = (500, 500)
-     screen = pygame.display.set_mode(size)
+          self.start = self.grid[start[0]][start[1]]
+          self.end = self.grid[end[0]][end[1]]
 
-     pygame.display.set_caption("My Game")
+          self.start.make_start()
+          self.end.make_end()
 
-     done = False
+     def euklidischeDistanz(self, node):  # heuristic function
+          return math.sqrt(((self.end.col - node.col) ** 2) + ((node.row - self.end.row) ** 2))
 
-     clock = pygame.time.Clock()
+     def manhattenDistanz(self, node):  # heuristic function
+          return abs(self.end.col - node.col) + abs(node.row - self.end.row)
 
-     while not done:
-     for event in pygame.event.get():
-     if event.type == pygame.QUIT:
-              done = True
+     def nodesInParth(self, node, parent):
+          current = node
+          counter = 1
+          while current != self.start:
+               counter += 1
+               current = parent[current]
+          return counter
 
-        # ---
-   # The code here ist called once per clock tick
-   # Let your algorithm loop here
-     # ---
+     def adjacentNodesUnmarked(self, coordinates, explored):
+          adjacent = []
+          possible = [(coordinates[0] + coordinates[1]),
+                      (coordinates[0] - coordinates[1]),
+                      (coordinates[0], coordinates[1] + 1),
+                      (coordinates[0], coordinates[1] - 1)]
 
-             screen.fill(BLACK)
+          for element in possible:
+               if(not element in explored and element[0] >= 0 and element[0] <= self.width and element[1] >= 0 and element[1] <= self.height):
+                    adjacent.append(element)
+          return adjacent
 
-             # ---
-             # The screen is empty here
-   # Put your 'drawing' code here
-             #
-             #   RECTANGEL EXAMPLE
-             #
-   #   The third Parameter defines the rectangles positioning etc: [y-pos,x-pos,width,height]
-   #   pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * y + MARGIN,
-   #                        (MARGIN + HEIGHT) * x + MARGIN,WIDTH,HEIGHT])
-             # ---
+     def markPath(self, parent, node):
+          field = node
+          while(field != self.start):
+               field.make_path()
+               field = parent[field]
+               self.draw()
+          self.start.make_path()
+          self.draw()
 
+     # TODO A* function for shortest path
 
-   pygame.display.flip()
+     def drawGrid(self):
+          for row in range(self.rows):
+               for col in range(self.rows):
+                    pygame.draw.rect(win,self.grid[row][col].color, [(self.margin + self.width) * col + self.margin, (self.margin + self.height)])
 
-   clock.tick(60)
+     def draw(self):
+          for row in self.grid:
+               for field in row:
+                    field.draw(self.win)
 
-pygame.quit()
+     def start(self):
+          SIZE = 1000
+          WIN = pygame.display.set_mode((SIZE, SIZE))
+          pygame.display.set_caption('Starting')
+          ROWS = 20
+          WIDTH = 22
+          HEIGHT = 22
+          MARGIN = 3
+          grid = Grid(ROWS, MARGIN, HEIGHT, WIDTH, (19,0), (0,19), WIN)
+
+          start = None
+          end = None
+
+          run = True
+          while run:
+               grid.draw()
+               for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                         run = False
+
+                    if event.type == pygame.KEYDOWN:
+                         if event.key == pygame.K_SPACE:
+                              for row in grid.grid:
+                                   for spot in row:
+                                        spot.update_neighbors(grid.grid)
+                              grid.aStart()
+
+          pygame.quit()
+
+     Grid.start()
