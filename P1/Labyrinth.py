@@ -103,7 +103,7 @@ class Node:
             self.neighbours.append(grid[self.row][self.col - 1])
 
 
-# heuristic function
+# heuristic function (manhattan)
 def h(p1, p2):
     x1, y1 = p1  # splitting values from the tuples
     x2, y2 = p2
@@ -226,7 +226,7 @@ def get_mouse_pos(pos, rows, width):
 
 
 def main(win, width):
-    ROWS = 20
+    ROWS = 30
     grid = make_grid(ROWS, width)
 
     Start = None
@@ -239,7 +239,7 @@ def main(win, width):
             if e.type == pygame.QUIT:
                 Run = False
 
-            if pygame.mouse.get_pressed()[0]:  # [0] -> left mouse button
+            if pygame.mouse.get_pressed()[0]:  # [0] -> left mouse button to set a field
                 pos = pygame.mouse.get_pos()
                 row, col = get_mouse_pos(pos, ROWS, width)
                 spot = grid[row][col]
@@ -254,7 +254,7 @@ def main(win, width):
                 elif spot != Start and spot != End:
                     spot.make_wall()
 
-            if pygame.mouse.get_pressed()[2]:  # [2] -> right mouse button
+            if pygame.mouse.get_pressed()[2]:  # [2] -> right mouse button to clear a field
                 pos = pygame.mouse.get_pos()
                 row, col = get_mouse_pos(pos, ROWS, width)
                 spot = grid[row][col]
