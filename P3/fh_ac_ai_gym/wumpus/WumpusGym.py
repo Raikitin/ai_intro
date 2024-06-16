@@ -27,3 +27,18 @@ class WumpusWorldEnv(gym.Env):
     def close(self):
         print("Not necessary since no seperate window was opened")
         pass
+
+# adding the knowledge base of the wumpus game here
+# WorldEnv will need a few updates
+class KnowledgeBase:
+    def __init__(self, size):
+        self.size = size
+        self.sentences = {('-P00',),('-W00',)}
+        self.firstMethod = False
+
+    def hornClauses(self):
+
+    def tell(self, perception):
+
+
+    def ask(self):
