@@ -36,6 +36,29 @@ class KnowledgeBase:
         self.sentences = {('-P00',),('-W00',)}  # possible actions
         self.firstMethod = False
 
+    def conjuctionAdjacent(self, e, x, y):
+        if (x < self.size - 1):
+            self.sentences.add((e + str(x + 1) + str(y),))
+        if (y < self.size - 1):
+            self.sentences.add((e + str(x) + str(y + 1),))
+        if (x > 0):
+            self.sentences.add((e + str(x - 1) + str(y),))
+        if (y > 0):
+            self.sentences.add((e + str(x) + str(y - 1),))
+
+    def disconjuctionAdjacent(self, e, x, y):
+        disjunction = []
+        if (x < self.size - 1):
+            disjunction.append(e + str(x + 1) + str(y))
+        if (y < self.size - 1):
+            disjunction.append(e + str(x) + str(y + 1))
+        if (x > 0):
+            disjunction.append(e + str(x - 1) + str(y))
+        if (y > 0):
+            disjunction.append(e + str(x) + str(y - 1))
+        self.sentences.add(tuple(disjunction))
+
+
     def hornClauses(self, e1, e2, x, y):
         list1 = []
         list2 = []
@@ -81,6 +104,17 @@ class KnowledgeBase:
             self.sentences.add((tuple(copy_second), (e2 + str(x - 1) + str(y), )))
             if (x < self.size - 1):
                 self.sentences.add((tuple(copy_second), (e2 + str(x + 1) + str(y), )))
+
+    def hornClausesAdjacent(self, t, p, x, y):
+        if (x < self.size - 1):
+            self.sentences.add(((p + str(x) + str(y),), (t + str(x + 1) + str(y),)))
+        if (y < self.size - 1):
+            self.sentences.add(((p + str(x) + str(y),), (t + str(x) + str(y + 1),)))
+        if (x > 0):
+            self.sentences.add(((p + str(x) + str(y),), (t + str(x - 1) + str(y),)))
+        if (y > 0):
+            self.sentences.add(((p + str(x) + str(y),), (t + str(x) + str(y - 1),)))
+
 
     #def tell(self, perception):
 
