@@ -33,7 +33,7 @@ class WumpusWorldEnv(gym.Env):
 class KnowledgeBase:
     def __init__(self, size):
         self.size = size
-        self.sentences = {('-P00',),('-W00',)}
+        self.sentences = {('-P00',),('-W00',)}  # possible actions
         self.firstMethod = False
 
     def hornClauses(self, e1, e2, x, y):
