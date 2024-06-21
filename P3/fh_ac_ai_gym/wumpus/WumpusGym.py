@@ -72,11 +72,11 @@ class KnowledgeBase:
         if (x < self.size - 1):
             list1.append('-' + e1 + str(x + 1) + str(y))
 
-        if (x > 0):
-            list1.append('-' + e1 + str(x - 1) + str(y))
-
         if (y < self.size - 1):
             list2.append('-' + e1 + str(x) + str(y + 1))
+
+        if (x > 0):
+            list1.append('-' + e1 + str(x - 1) + str(y))
 
         if (y > 0):
             list2.append('-' + e1 + str(x) + str(y - 1))
@@ -84,29 +84,29 @@ class KnowledgeBase:
         copy_first = list1.copy()
         copy_second = list2.copy()
 
-        if (y < self.size - 1):
-            list1.append('-' + e1 + str(x) + str(y + 1))
-            self.sentences.add((tuple(list1), (e2 + str(x) + str(y + 1),)))
-            if (y > 0):
-                self.sentences.add((tuple(list1), (e2 + str(x) + str(y - 1),)))
-
-        if (y > 0):
-            copy_first.append('-' + e1 + str(x) + str(y - 1))
-            self.sentences.add((tuple(copy_first), (e2 + str(x) + str(y - 1),)))
-            if (y < self.size - 1):
-                self.sentences.add((tuple(copy_first), (e2 + str(x) + str(y + 1),)))
-
         if (x < self.size - 1):
             copy_second.append('-' + e1 + str(x + 1) + str(y))
             self.sentences.add((tuple(list1), (e2 + str(x + 1) + str(y),)))
             if (y < self.size - 1):
                 self.sentences.add((tuple(list1), (e2 + str(x + 1) + str(y),)))
 
+        if (y < self.size - 1):
+            list1.append('-' + e1 + str(x) + str(y + 1))
+            self.sentences.add((tuple(list1), (e2 + str(x) + str(y + 1),)))
+            if (y > 0):
+                self.sentences.add((tuple(list1), (e2 + str(x) + str(y - 1),)))
+
         if (x > 0):
             copy_second.append('-' + e1 + str(x - 1) + str(y))
             self.sentences.add((tuple(copy_second), (e2 + str(x - 1) + str(y),)))
             if (x < self.size - 1):
                 self.sentences.add((tuple(copy_second), (e2 + str(x + 1) + str(y),)))
+
+        if (y > 0):
+            copy_first.append('-' + e1 + str(x) + str(y - 1))
+            self.sentences.add((tuple(copy_first), (e2 + str(x) + str(y - 1),)))
+            if (y < self.size - 1):
+                self.sentences.add((tuple(copy_first), (e2 + str(x) + str(y + 1),)))
 
     def hornClausesAdjacent(self, t, p, x, y):
         if (x < self.size - 1):
@@ -217,6 +217,49 @@ class KnowledgeBase:
             return result
         return combined
 
-    #def tell(self, perception):
+    def tell(self, perception):
+        x = perception['x']
+        y = perception['y']
+
+        if (self.firstMethod):
+
+            if (perception['breeze']):
+                self.sentences.add(('B' + str(x) + str(y),))
+                self.sentences.add(('-P' + str(x) + str(y),))
+                self.disconjuctionAdjacent('P', x, y)
+            else:
+                self.sentences.add(('-B' + str(x) + str(y),))
+                self.conjuctionAdjacent('-P', x, y)
+            if (perception['stench']):
+                self.sentences.add(('S' + str(x) + str(y),))
+                self.sentences.add(('-W' + str(x) + str(y),))
+                self.disconjuctionAdjacent('W', x, y)
+            else:
+                self.sentences.add(('-S' + str(x) + str(y),))
+                self.conjuctionAdjacent('-W', x, y)
+
+        else:
+            if (x < self.size - 1):
+                self.hornClauses('B', 'P', x + 1, y)
+                self.hornClauses('S', 'W', x + 1, y)
+            if (y < self.size - 1):
+                self.hornClauses('B', 'P', x, y + 1)
+                self.hornClauses('S', 'W', x, y + 1)
+            if (x > 0):
+                self.hornClauses('B', 'P', x - 1, y)
+                self.hornClauses('S', 'W', x - 1, y)
+            if (y > 0):
+                self.hornClauses('B', 'P', x, y - 1)
+                self.hornClauses('S', 'W', x, y - 1)
+            if (perception['breeze']):
+                self.sentences.add(('B' + str(x) + str(y),))
+            else:
+                self.sentences.add(('-B' + str(x) + str(y),))
+                self.conjuctionAdjacent('-P', x, y)
+            if (perception['stench']):
+                self.sentences.add(('S' + str(x) + str(y),))
+            else:
+                self.sentences.add(('-S' + str(x) + str(y),))
+                self.conjuctionAdjacent('-W', x, y)
 
     #def ask(self):
