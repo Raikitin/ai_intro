@@ -262,4 +262,30 @@ class KnowledgeBase:
                 self.sentences.add(('-S' + str(x) + str(y),))
                 self.conjuctionAdjacent('-W', x, y)
 
-    #def ask(self):
+    def ask(self, x,y):
+        value = []
+
+        if(self.firstMethod):
+            if(self.resolution('P'+str(x)+str(y))):
+                value.append('Pit')
+            elif(not self.resolution('-P'+str(x)+str(y))):
+                value.append('?Pit')
+            if(self.resolution('W'+str(x)+str(y))):
+                value.append('Wumpus')
+            elif(not self.resolution('-W'+str(x)+str(y))):
+                value.append('?Wumpus')
+            if(len(value) == 0):
+                value.append('OK')
+
+        else:
+            if(self.forwardChaining('P'+str(x)+str(y))):
+                value.append('Pit')
+            elif(not self.forwardChaining('-P'+str(x)+str(y))):
+                value.append('?Pit')
+            if(self.forwardChaining('W'+str(x)+str(y))):
+                value.append('Wumpus')
+            elif(not self.forwardChaining('-W'+str(x)+str(y))):
+                value.append('?Wumpus')
+            if(len(value) == 0):
+                value.append('OK')
+        return ','.join(value)
