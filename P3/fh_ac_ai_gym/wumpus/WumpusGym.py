@@ -13,11 +13,14 @@ class WumpusWorldEnv(gym.Env):
     def __init__(self, size=4):
         self._world = Wumpus_World(size)
         self.action_space = [0, 1, 2, 3, 4, 5]  # possible actions
+        self.KB = KnowledgeBase(size)
+        self.size = size
 
     def step(self, action):
         done = self._world.exec_action(action)
         obs = self._world.get_observation()
         reward = self._world.get_reward()
+        self.KB.tell(obs)
         return obs, reward, not done, {"info", "no further information"}
 
     def reset(self):
@@ -26,6 +29,19 @@ class WumpusWorldEnv(gym.Env):
 
     def render(self, mode='human'):
         self._world.print()
+        print("Knowledge base:")
+        x = self._world.state.agent_location.x
+        y = self._world.state.agent_location.y
+        print("Current: ", self.KB.ask(x, y))
+        if(x < self.size - 1):
+            print("Walk Right: ", self.KB.ask(x + 1, y))
+        if (y < self.size - 1):
+            print("Walk Above: ", self.KB.ask(x, y + 1))
+        if (x > 0):
+            print("Walk Left: ", self.KB.ask(x - 1, y))
+        if (y > 0):
+            print("Walk Below: ", self.KB.ask(x, y - 1))
+
 
     def close(self):
         print("Not necessary since no seperate window was opened")
