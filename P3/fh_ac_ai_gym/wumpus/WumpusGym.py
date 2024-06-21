@@ -33,7 +33,7 @@ class WumpusWorldEnv(gym.Env):
         x = self._world.state.agent_location.x
         y = self._world.state.agent_location.y
         print("Current: ", self.KB.ask(x, y))
-        if(x < self.size - 1):
+        if (x < self.size - 1):
             print("Walk Right: ", self.KB.ask(x + 1, y))
         if (y < self.size - 1):
             print("Walk Above: ", self.KB.ask(x, y + 1))
@@ -41,7 +41,6 @@ class WumpusWorldEnv(gym.Env):
             print("Walk Left: ", self.KB.ask(x - 1, y))
         if (y > 0):
             print("Walk Below: ", self.KB.ask(x, y - 1))
-
 
     def close(self):
         print("Not necessary since no seperate window was opened")
@@ -156,13 +155,15 @@ class KnowledgeBase:
 
         while not agenda.empty():
             current = agenda.get()
+
             if (current == (query,)):
                 return True
+
             if (not inferred[current]):
                 inferred[current] = True
                 for item in self.premises(current):
-                    count[item[0]] -= 1
-                    if (count[item[0]] == 0):
+                    count[item] -= 1
+                    if (count[item] == 0):
                         for add in self.conclusion(item):
                             agenda.put(add)
         return False
@@ -278,30 +279,30 @@ class KnowledgeBase:
                 self.sentences.add(('-S' + str(x) + str(y),))
                 self.conjuctionAdjacent('-W', x, y)
 
-    def ask(self, x,y):
+    def ask(self, x, y):
         value = []
 
-        if(self.firstMethod):
-            if(self.resolution('P'+str(x)+str(y))):
+        if (self.firstMethod):
+            if (self.resolution('P' + str(x) + str(y))):
                 value.append('Pit')
-            elif(not self.resolution('-P'+str(x)+str(y))):
+            elif (not self.resolution('-P' + str(x) + str(y))):
                 value.append('?Pit')
-            if(self.resolution('W'+str(x)+str(y))):
+            if (self.resolution('W' + str(x) + str(y))):
                 value.append('Wumpus')
-            elif(not self.resolution('-W'+str(x)+str(y))):
+            elif (not self.resolution('-W' + str(x) + str(y))):
                 value.append('?Wumpus')
-            if(len(value) == 0):
+            if (len(value) == 0):
                 value.append('OK')
 
         else:
-            if(self.forwardChaining('P'+str(x)+str(y))):
+            if (self.forwardChaining('P' + str(x) + str(y))):
                 value.append('Pit')
-            elif(not self.forwardChaining('-P'+str(x)+str(y))):
+            elif (not self.forwardChaining('-P' + str(x) + str(y))):
                 value.append('?Pit')
-            if(self.forwardChaining('W'+str(x)+str(y))):
+            if (self.forwardChaining('W' + str(x) + str(y))):
                 value.append('Wumpus')
-            elif(not self.forwardChaining('-W'+str(x)+str(y))):
+            elif (not self.forwardChaining('-W' + str(x) + str(y))):
                 value.append('?Wumpus')
-            if(len(value) == 0):
+            if (len(value) == 0):
                 value.append('OK')
         return ','.join(value)
