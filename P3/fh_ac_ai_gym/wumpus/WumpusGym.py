@@ -168,28 +168,28 @@ class KnowledgeBase:
                 result.add(tuple(item[1]))
         return result
 
-    def resolution(self, query):   # 06 - 31
+    def resolution(self, query):  # 06 - 31
         query = query[1:] if (query[0] == '-') else ('-' + query)
         clauses = self.sentences.copy()
         clauses.add((query,))
         new = set()
 
-        while(True):
+        while (True):
             for i in range(len(clauses)):
                 for j in range(len(clauses)):
                     if (i == j):
                         continue
-                    C1 = list(clauses)[i]
-                    C2 = list(clauses)[j]
+                    c1 = list(clauses)[i]
+                    c2 = list(clauses)[j]
 
-                    if (isinstance(C1, str)):
-                        C1 = (C1,)
-                    if (isinstance(C2, str)):
-                        C2 = (C2,)
+                    if (isinstance(c1, str)):
+                        c1 = (c1,)
+                    if (isinstance(c2, str)):
+                        c2 = (c2,)
 
-                    resolvent = self.resolve(C1, C2)    # TODO def resolve
+                    resolvent = self.resolve(c1, c2)
 
-                    if(() in resolvent and len(resolvent) == 1):
+                    if (() in resolvent and len(resolvent) == 1):
                         return True
 
                     new |= resolvent
@@ -198,6 +198,24 @@ class KnowledgeBase:
                     return False
 
                 clauses |= new
+
+    def resolve(self, c1, c2):
+        result = set()
+        combined = {c1} | {c2}
+        for item1 in c1:
+            for item2 in c2:
+                if (item1 and item2 and item1 == '-' + item2 or item2 == '-' + item1):
+                    for x in combined:
+                        tmp = []
+                        for y in x:
+                            if (y != item1 and y != item2):
+                                tmp.append(y)
+                            if (len(tmp) == 0):
+                                result.add(tuple(tmp))
+
+        if (result):
+            return result
+        return combined
 
     #def tell(self, perception):
 
