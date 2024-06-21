@@ -144,10 +144,10 @@ class KnowledgeBase:
                 return True
             if (not inferred[current]):
                 inferred[current] = True
-                for item in self.premises(current):  # TODO: def premises()
+                for item in self.premises(current):
                     count[item[0]] -= 1
                     if (count[item[0]] == 0):
-                        for add in self.conclusion(item):  # TODO def conclusion()
+                        for add in self.conclusion(item):
                             agenda.put(add)
         return False
 
@@ -168,7 +168,36 @@ class KnowledgeBase:
                 result.add(tuple(item[1]))
         return result
 
-    #def resolution():
+    def resolution(self, query):   # 06 - 31
+        query = query[1:] if (query[0] == '-') else ('-' + query)
+        clauses = self.sentences.copy()
+        clauses.add((query,))
+        new = set()
+
+        while(True):
+            for i in range(len(clauses)):
+                for j in range(len(clauses)):
+                    if (i == j):
+                        continue
+                    C1 = list(clauses)[i]
+                    C2 = list(clauses)[j]
+
+                    if (isinstance(C1, str)):
+                        C1 = (C1,)
+                    if (isinstance(C2, str)):
+                        C2 = (C2,)
+
+                    resolvent = self.resolve(C1, C2)    # TODO def resolve
+
+                    if(() in resolvent and len(resolvent) == 1):
+                        return True
+
+                    new |= resolvent
+
+                if (new <= clauses):
+                    return False
+
+                clauses |= new
 
     #def tell(self, perception):
 
