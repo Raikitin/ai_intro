@@ -2,6 +2,8 @@ import math
 import random
 import numpy as np
 #import matplotlib.pyplot as plt
+import tensorflow as tf
+import keras
 from keras.datasets import mnist  # TODO loo up best way to load training data
 
 
@@ -16,14 +18,14 @@ class FeedForwardNetwork:
         self.Wih = np.random.randn(self.input, self.hidden)  # input-hidden weight
         self.Who = np.random.randn(self.hidden, self.output)  # hidden-output weight
 
-        (train_x, train_y), (self.test_x, self.test_y) = mnist.load_data()
+        (train_x, train_y), (self.test_x, self.test_y) = keras.datasets.mnist.load_data(path="mnist.npz")
         self.train_x = []
         self.train_y = []
 
         for i in range(self.data):
-            self.train_x.append(self.image_convert(np.array(train_x[i], dtype=float).flatten()))
+            self.train_x.append(self.image_convert(np.array(train_x[i], dtype=np.float64).flatten()))
 
-            tmp = np.array([0.01 for i in range(self.output)], dtype=float)
+            tmp = np.array([0.01 for i in range(self.output)], dtype=np.float64)
             tmp[train_y[i]] = 0.99
             self.train_y.append(tmp)
 
@@ -31,6 +33,8 @@ class FeedForwardNetwork:
         self.train_y = np.array(self.train_y)
 
     def sigmoid(self, x):
+        if(x < 0):
+            return 1 / (1 + math.exp(x))
         return 1 / (1 + math.exp(-x))
 
     def sigmoid_derivative(self, x):
@@ -50,13 +54,13 @@ class FeedForwardNetwork:
 
             error_output = self.train_y - out
 
-            error_hidden = np.dot(np.transpose(self.Who), error_output)
+            error_hidden = np.dot(error_output, np.transpose(self.Who))
 
             #tmp = np.vectorize(self.sigmoid)(out)
 
-            delta_who = np.dot((error_output * np.vectorize(self.sigmoid)(out)), np.transpose(hidden))
+            delta_who = np.dot(np.transpose(hidden), (error_output * np.vectorize(self.sigmoid)(out)))
 
-            delta_wih = np.dot((error_hidden * np.vectorize(self.sigmoid)(hidden)), np.transpose(self.train_x))
+            delta_wih = np.dot(np.transpose(self.train_x), (error_hidden * np.vectorize(self.sigmoid)(hidden)))
 
             self.Who = self.rate * delta_who
             self.Wih = self.rate * delta_wih
@@ -64,11 +68,11 @@ class FeedForwardNetwork:
     #def eval(self)
 
     def image_convert(self, image):
-        input = np.zeros(len(image), dtype=float)
+        input = np.zeros(len(image), dtype=np.float64)
         factor = 0.99 / 254
 
         for i in range(len(image)):
-            if (image[i] == np.unit8(0)):
+            if (image[i] == np.uint8(0)):
                 input[i] = 0.01
             else:
                 input[i] = image[i] * factor
@@ -81,17 +85,17 @@ class FeedForwardNetwork:
             o, h = self.think([input])
             if (np.argmax(o) != self.test_y[i]):
                 fails += 1
-        print("Iteration count: " + str(it) + ", Accuracy: " + str((it - fails) / it) + "%")
+        print("Iteration count: " + str(it) + ", Accuracy: " + str((it - fails) * 100 / it) + "%")
 
 
 if __name__ == '__main__':
     number_input_nodes = 784
     number_hidden_nodes = 200
     number_output_nodes = 10
-    training_samples = 300
-    training_amount = 300
-    test_amount = 100
-    learning_rate = 0.1
+    training_samples = 800
+    training_amount = 1000
+    test_amount = 1000
+    learning_rate = 0.2
 
     network = FeedForwardNetwork(number_input_nodes, number_hidden_nodes, number_output_nodes, learning_rate,
                                  training_samples)
