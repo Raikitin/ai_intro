@@ -52,7 +52,7 @@ class WumpusWorldEnv(gym.Env):
 class KnowledgeBase:
     def __init__(self, size):
         self.size = size
-        self.sentences = {('-P00',), ('-W00',)}  # possible actions
+        self.sentences = {('-P00',), ('-W00',)}
         self.firstMethod = False
 
     def conjuctionAdjacent(self, e, x, y):
@@ -87,11 +87,11 @@ class KnowledgeBase:
         if (x < self.size - 1):
             list1.append('-' + e1 + str(x + 1) + str(y))
 
-        if (y < self.size - 1):
-            list2.append('-' + e1 + str(x) + str(y + 1))
-
         if (x > 0):
             list1.append('-' + e1 + str(x - 1) + str(y))
+
+        if (y < self.size - 1):
+            list2.append('-' + e1 + str(x) + str(y + 1))
 
         if (y > 0):
             list2.append('-' + e1 + str(x) + str(y - 1))
@@ -99,29 +99,29 @@ class KnowledgeBase:
         copy_first = list1.copy()
         copy_second = list2.copy()
 
-        if (x < self.size - 1):
-            copy_second.append('-' + e1 + str(x + 1) + str(y))
-            self.sentences.add((tuple(list1), (e2 + str(x + 1) + str(y),)))
-            if (y < self.size - 1):
-                self.sentences.add((tuple(list1), (e2 + str(x + 1) + str(y),)))
-
         if (y < self.size - 1):
             list1.append('-' + e1 + str(x) + str(y + 1))
             self.sentences.add((tuple(list1), (e2 + str(x) + str(y + 1),)))
             if (y > 0):
                 self.sentences.add((tuple(list1), (e2 + str(x) + str(y - 1),)))
 
-        if (x > 0):
-            copy_second.append('-' + e1 + str(x - 1) + str(y))
-            self.sentences.add((tuple(copy_second), (e2 + str(x - 1) + str(y),)))
-            if (x < self.size - 1):
-                self.sentences.add((tuple(copy_second), (e2 + str(x + 1) + str(y),)))
-
         if (y > 0):
             copy_first.append('-' + e1 + str(x) + str(y - 1))
             self.sentences.add((tuple(copy_first), (e2 + str(x) + str(y - 1),)))
             if (y < self.size - 1):
                 self.sentences.add((tuple(copy_first), (e2 + str(x) + str(y + 1),)))
+
+        if (x < self.size - 1):
+            copy_second.append('-' + e1 + str(x + 1) + str(y))
+            self.sentences.add((tuple(list1), (e2 + str(x + 1) + str(y),)))
+            if (y < self.size - 1):
+                self.sentences.add((tuple(list1), (e2 + str(x + 1) + str(y),)))
+
+        if (x > 0):
+            copy_second.append('-' + e1 + str(x - 1) + str(y))
+            self.sentences.add((tuple(copy_second), (e2 + str(x - 1) + str(y),)))
+            if (x < self.size - 1):
+                self.sentences.add((tuple(copy_second), (e2 + str(x + 1) + str(y),)))
 
     def hornClausesAdjacent(self, t, p, x, y):
         if (x < self.size - 1):
